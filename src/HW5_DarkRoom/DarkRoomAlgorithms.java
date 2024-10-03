@@ -23,20 +23,20 @@ public class DarkRoomAlgorithms implements DarkRoomAlgorithmsInterface {
                 leftRotatedArray[pixelArray[i].length - 1 - j][i] = pixelArray[i][j];
             }
         }
-		return new GImage(leftRotatedArray);
+        return new GImage(leftRotatedArray);
     }
 
     public GImage rotateRight(GImage source) {
         // TODO
-		int[][] pixelArray = source.getPixelArray();
-		int[][] leftRotatedArray = new int[pixelArray[0].length][pixelArray.length];
+        int[][] pixelArray = source.getPixelArray();
+        int[][] leftRotatedArray = new int[pixelArray[0].length][pixelArray.length];
 
-		for (int i = 0; i < pixelArray.length; i++) {
-			for (int j = 0; j < pixelArray[i].length; j++) {
-				leftRotatedArray[j][pixelArray.length - 1 - i] = pixelArray[i][j];
-			}
-		}
-		return new GImage(leftRotatedArray);
+        for (int i = 0; i < pixelArray.length; i++) {
+            for (int j = 0; j < pixelArray[i].length; j++) {
+                leftRotatedArray[j][pixelArray.length - 1 - i] = pixelArray[i][j];
+            }
+        }
+        return new GImage(leftRotatedArray);
     }
 
     public GImage flipHorizontal(GImage source) {
@@ -88,13 +88,21 @@ public class DarkRoomAlgorithms implements DarkRoomAlgorithmsInterface {
     public GImage blur(GImage source) {
         // TODO
         int[][] pixelArray = source.getPixelArray();
-        for (var row : pixelArray) {
+        for (int i = 0; i < pixelArray.length; i++) {
+            int[] row = pixelArray[i];
             for (int j = 0; j < row.length; j++) {
-                int pixel = row[j];
-                int red = GImage.getRed(pixel);
-                int green = GImage.getGreen(pixel);
-                int blue = GImage.getBlue(pixel);
-                row[j] = green >= 2 * Math.max(red, blue) ? GImage.createRGBPixel(red, green, blue, 0) : pixel;
+                int sum = 0;
+                for (int m = 0; m < 3; m++) {
+                    for (int n = 0; n < 3; n++) {
+                        int pixelX = j - 1 + n;
+                        int pixelY = i - 1 + m;
+                        if (pixelX > -1 && pixelX < row.length && pixelY > - 1 && pixelY < pixelArray.length) {
+                            sum+=pixelArray[pixelY][pixelX];
+                        }
+                    }
+                }
+                int avg = sum / 9;
+                pixelArray[i][j] = avg;
             }
         }
         return new GImage(pixelArray);
