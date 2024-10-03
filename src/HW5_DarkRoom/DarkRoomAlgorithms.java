@@ -108,7 +108,7 @@ public class DarkRoomAlgorithms implements DarkRoomAlgorithmsInterface {
         return new GImage(pixelArray);
     }
 
-    public GImage blur(GImage source) {
+    public GImage blurStrong(GImage source) {
         // TODO
         int[][] pixelArray = source.getPixelArray();
         for (int i = 0; i < pixelArray.length; i++) {
@@ -139,6 +139,39 @@ public class DarkRoomAlgorithms implements DarkRoomAlgorithmsInterface {
             }
         }
         return new GImage(pixelArray);
+    }
+    public GImage blur(GImage source) {
+        // TODO
+        int[][] pixelArray = source.getPixelArray();
+        int[][] pixelArrayCopy = new int[pixelArray.length][pixelArray[0].length];
+        for (int i = 0; i < pixelArray.length; i++) {
+            int[] row = pixelArray[i];
+            for (int j = 0; j < row.length; j++) {
+                int red = 0;
+                int green = 0;
+                int blue = 0;
+                int numPixels = 0;
+                int pixelAnchor = pixelArray[i][j];
+                for (int m = 0; m < 3; m++) {
+                    for (int n = 0; n < 3; n++) {
+                        int currPixel;
+                        int pixelX = j - 1 + n;
+                        int pixelY = i - 1 + m;
+                        if (pixelX > -1 && pixelX < row.length && pixelY > -1 && pixelY < pixelArray.length) {
+                            numPixels++;
+                            currPixel = pixelArray[pixelY][pixelX];
+                            red += GImage.getRed(currPixel);
+                            green += GImage.getGreen(currPixel);
+                            blue += GImage.getBlue(currPixel);
+                        }
+                    }
+                }
+
+                pixelArrayCopy[i][j] = GImage.createRGBPixel(red / numPixels,
+                        green / numPixels, blue / numPixels, GImage.getAlpha(pixelAnchor));
+            }
+        }
+        return new GImage(pixelArrayCopy);
     }
 
 
