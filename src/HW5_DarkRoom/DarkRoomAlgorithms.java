@@ -118,6 +118,7 @@ public class DarkRoomAlgorithms implements DarkRoomAlgorithmsInterface {
                 int green = 0;
                 int blue = 0;
                 int numPixels = 0;
+                int pixelAnchor = pixelArray[i][j];
                 for (int m = 0; m < 3; m++) {
                     for (int n = 0; n < 3; n++) {
                         int currPixel;
@@ -133,7 +134,8 @@ public class DarkRoomAlgorithms implements DarkRoomAlgorithmsInterface {
                     }
                 }
 
-                pixelArray[i][j] = GImage.createRGBPixel(red / numPixels, green / numPixels, blue / numPixels);
+                pixelArray[i][j] = GImage.createRGBPixel(red / numPixels,
+                        green / numPixels, blue / numPixels, GImage.getAlpha(pixelAnchor));
             }
         }
         return new GImage(pixelArray);
