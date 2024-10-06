@@ -50,7 +50,6 @@ public class DarkRoomAlgorithms implements DarkRoomAlgorithmsInterface {
                 row[j] = row[row.length - 1 - j];
                 row[row.length - 1 - j] = tmp;
             }
-
         }
         return new GImage(pixelArray);
     }
@@ -189,6 +188,36 @@ public class DarkRoomAlgorithms implements DarkRoomAlgorithmsInterface {
 
     public GImage equalize(GImage source) {
         // TODO
-        return null;
+        int[][] pixelArray = source.getPixelArray();
+        int[] luminosityHistogram = new int[256];
+        int[] CLH = new int[256];
+        int totalPixels = 0;
+        for (int[] row : pixelArray) {
+            for (int pixel : row) {
+                int luminosity = computeLuminosity(GImage.getRed(pixel), GImage.getGreen(pixel), GImage.getBlue(pixel));
+                luminosityHistogram[luminosity] += 1;
+            }
+        }
+        for (int i = 0; i < luminosityHistogram.length; i++) {
+            int sum = 0;
+            for (int j = 0; j <= i; j++) {
+                sum += luminosityHistogram[j];
+            }
+            CLH[i] = sum;
+        }
+        for (int amount : luminosityHistogram) {
+            totalPixels += amount;
+        }
+        for (int[] row : pixelArray) {
+            for (int j = 0; j < row.length; j++) {
+                int pixel = row[j];
+                int amount = CLH[computeLuminosity(GImage.getRed(pixel), GImage.getGreen(pixel), GImage.getBlue(pixel))];
+                int colorValue = (int) Math.round(255.0 * amount / totalPixels);
+                row[j] = GImage.createRGBPixel(colorValue, colorValue, colorValue);
+            }
+        }
+        return new GImage(pixelArray);
     }
+
+
 }

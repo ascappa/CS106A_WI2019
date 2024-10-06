@@ -24,7 +24,7 @@ public interface DarkRoomAlgorithmsInterface {
 	 * This code is provided with Image Shop. This particular *
 	 * file says which methods ImageShopAlgorithms has to     *
 	 * implement, and defines a method computeLuminosity.     *
-	 * 
+
 	 * You don't need to read, nor understand this file,      *
 	 * though you are more than welcome to peruse it. You     *
 	 * should not change its contents!                        *                       
