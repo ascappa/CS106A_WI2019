@@ -77,6 +77,7 @@ public class Breakout extends GraphicsProgram {
 
     private double vx, vy;
     private double NBricksLeft;
+    private double NLivesLeft;
 
     public static void main(String[] args) {
         new Breakout().start();
@@ -85,6 +86,7 @@ public class Breakout extends GraphicsProgram {
     public void run() {
         Color[] brickColors = {Color.RED, Color.BLUE, Color.PINK, Color.YELLOW};
         NBricksLeft = brickColors.length * 2 * NBRICK_COLUMNS;
+        NLivesLeft = 3;
         vx = rnGen.nextDouble(VELOCITY_X_MIN, VELOCITY_X_MAX);
         if (rnGen.nextBoolean(0.5)) vx *= -1;
         vy = 3.0;
@@ -122,13 +124,20 @@ public class Breakout extends GraphicsProgram {
                 }
             }
         }
-
-        while (true) {
+        pause(1000);
+        while (NBricksLeft > 0) {
             ball.move(vx, vy);
-
             if (ball.getX() <= 0 || ball.getRightX() >= getWidth()) vx *= -1;
             if (ball.getY() <= 0) vy *= -1;
-            if (ball.getBottomY() >= getHeight()) break;
+            if (ball.getBottomY() >= getHeight()) {
+                NLivesLeft--;
+                if (NLivesLeft <= 0) break;
+                ball.setCenterLocation(getWidth() / 2.0, getHeight() / 2.0);
+                vx = rnGen.nextDouble(VELOCITY_X_MIN, VELOCITY_X_MAX);
+                if (rnGen.nextBoolean(0.5)) vx *= -1;
+                vy = 3.0;
+                waitForClick();
+            }
             GObject collObj = getCollidingObject();
 
             if (collObj == paddle) {
@@ -137,13 +146,20 @@ public class Breakout extends GraphicsProgram {
             } else if (collObj != null) {
                 vy = -vy;
                 remove(collObj);
+                NBricksLeft--;
             }
             pause(DELAY);
         }
         removeAll();
-        GLabel text = new GLabel("you lost!");
-        text.setCenterLocation((double) (getWidth()) / 2, (double) (getHeight()) / 2);
-        add(text);
+        String text;
+        if (NBricksLeft == 0) {
+            text = "you win!";
+        } else {
+            text = "you lose!";
+        }
+        GLabel label = new GLabel(text);
+        label.setCenterLocation((double) (getWidth()) / 2, (double) (getHeight()) / 2);
+        add(label);
     }
 
     private GObject getCollidingObject() {
